@@ -4,10 +4,14 @@
 
     <!-- Inherit the core Web Toolkit stuff.                  -->
     <inherits name='com.google.gwt.user.User'/>
+    <inherits name="com.bytebybyte.gwt.fontawesome.FontAwesomeLib" />
 
     <!-- Specify the app entry point class.                   -->
     <entry-point class='com.gruchanet.gwt.scratchnote.client.scratchnote'/>
 
+    <source path="client"/>
+    <source path="domain"/>
+    <source path="widget"/>
 
     <!-- Specify the app servlets.                   -->
     <servlet path='/scratchnoteService' class='com.gruchanet.gwt.scratchnote.server.scratchnoteServiceImpl'/>

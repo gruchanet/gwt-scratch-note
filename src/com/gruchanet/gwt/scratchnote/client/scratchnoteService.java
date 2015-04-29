@@ -3,11 +3,13 @@ package com.gruchanet.gwt.scratchnote.client;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+import com.gruchanet.gwt.scratchnote.domain.Note;
 
 @RemoteServiceRelativePath("scratchnoteService")
 public interface scratchnoteService extends RemoteService {
-    // Sample interface method of remote interface
-    String getMessage(String msg);
+    void addNote(Note note);
+    void removeNote(int seqID);
+    void updateNote(int seqID, Note note);
 
     /**
      * Utility/Convenience class.

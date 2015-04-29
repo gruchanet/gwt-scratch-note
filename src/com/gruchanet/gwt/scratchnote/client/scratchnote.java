@@ -6,6 +6,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.gruchanet.gwt.scratchnote.widget.StickyNote;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>
@@ -16,29 +17,44 @@ public class scratchnote implements EntryPoint {
      * This is the entry point method.
      */
     public void onModuleLoad() {
-        final Button button = new Button("Click me");
-        final Label label = new Label();
+        final Button newNoteBtn = new Button("Scratch a note...", new ClickHandler() {
 
-        button.addClickHandler(new ClickHandler() {
+            @Override
             public void onClick(ClickEvent event) {
-                if (label.getText().equals("")) {
-                    scratchnoteService.App.getInstance().getMessage("Hello, World!", new MyAsyncCallback(label));
-                } else {
-                    label.setText("");
-                }
+                StickyNote newNote = new StickyNote();
+
+                RootPanel.get("notes").add(newNote);
+                newNote.setFocus(true);
+                // TODO: editable note [new/update note == editable note]
+                // TODO: note to add [on the left side], like there: https://developer.mozilla.org/pl/demos/detail/sticky-notes/launch
             }
         });
 
-        // Assume that the host HTML has elements defined whose
-        // IDs are "slot1", "slot2".  In a real app, you probably would not want
-        // to hard-code IDs.  Instead, you could, for example, search for all
-        // elements with a particular CSS class and replace them with widgets.
-        //
-        RootPanel.get("slot1").add(button);
-        RootPanel.get("slot2").add(label);
+        RootPanel.get("newNoteBtn").add(newNoteBtn);
+//        final Button button = new Button("Click me");
+//        final Label label = new Label();
+//
+//        button.addClickHandler(new ClickHandler() {
+//            public void onClick(ClickEvent event) {
+//                if (label.getText().equals("")) {
+//                    scratchnoteService.App.getInstance().getMessage("Hello, World!", new MyAsyncCallback(label));
+//                } else {
+//                    label.setText("");
+//                }
+//            }
+//        });
+//
+//        // Assume that the host HTML has elements defined whose
+//        // IDs are "slot1", "slot2".  In a real app, you probably would not want
+//        // to hard-code IDs.  Instead, you could, for example, search for all
+//        // elements with a particular CSS class and replace them with widgets.
+//        //
+//        RootPanel.get("slot1").add(button);
+//        RootPanel.get("slot2").add(label);
     }
 
     private static class MyAsyncCallback implements AsyncCallback<String> {
+
         private Label label;
 
         public MyAsyncCallback(Label label) {
