@@ -14,7 +14,12 @@ body {
 }
 
 
-/* Notes */
+/*
+ * Notes styles
+ *  based on:
+ * - http://cssdeck.com/labs/css3-sticky-note
+ * - http://getbootstrap.com/
+ */
 #notes {
     margin: 10px;
     padding: 5px;
