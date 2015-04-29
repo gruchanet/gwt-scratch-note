@@ -9,26 +9,32 @@ import com.gruchanet.gwt.scratchnote.domain.Note;
 public class StickyNote extends Composite {
 
     private Note bean;
-    private NoteTextArea noteTextArea = new NoteTextArea();
 
-    public StickyNote() {
+    private NoteTextArea noteTextArea = new NoteTextArea();
+    private ControlButton closeBtn = new ControlButton(ControlButton.Type.REMOVE);
+    private ControlButton saveBtn = new ControlButton(ControlButton.Type.SAVE);
+    private ControlButton editBtn = new ControlButton(ControlButton.Type.EDIT);
+
+    public StickyNote(boolean editMode) {
         super();
 
         initBean();
-        initWidget();
+        initWidget(editMode);
     }
 
     private void initBean() {
-        bean = new Note("Note something here...");
-        updateNoteText();
+        bean = new Note();
+        setText("Note something here...");
     }
 
-    private void initWidget() {
+    private void initWidget(boolean editMode) {
         FlowPanel panel = new FlowPanel();
         panel.setStyleName("note-wrapper");
         panel.add(noteTextArea);
-        panel.add(new ControlButton(ControlButton.Type.CLOSE));
-        panel.add(new ControlButton(ControlButton.Type.EDIT));
+        panel.add(closeBtn);
+        panel.add(saveBtn);
+        panel.add(editBtn);
+        setEditMode(editMode);
 
         initWidget(panel);
     }
@@ -37,16 +43,28 @@ public class StickyNote extends Composite {
         return bean;
     }
 
+    public void setEditMode(boolean editMode) {
+        if (editMode) {
+            saveBtn.setVisible(true);
+            editBtn.setVisible(false);
+            noteTextArea.setReadOnly(false);
+        } else {
+            saveBtn.setVisible(false);
+            editBtn.setVisible(true);
+            noteTextArea.setReadOnly(true);
+        }
+    }
+
     public void setFocus(boolean focus) {
         noteTextArea.setFocus(focus);
     }
 
     public void setText(String text) {
         bean.setText(text);
-        updateNoteText();
+        refreshNoteText();
     }
 
-    public void updateNoteText() {
+    public void refreshNoteText() {
         noteTextArea.setText(bean.getText());
     }
 
@@ -66,9 +84,9 @@ public class StickyNote extends Composite {
     private static class ControlButton extends Button {
 
         public static enum Type {
-            CLOSE("close", "<span>&times;</span>"),
+            REMOVE("remove", "<span>&times;</span>"),
             EDIT("edit", "<span class=\"fa fa-pencil\"></span>"),
-            SAVE("save", "<span class=\"fa fa-floppy-o\"></span>");
+            SAVE("save", "<span class=\"fa fa-check\"></span>");
 
             private final String name;
             private final String html;

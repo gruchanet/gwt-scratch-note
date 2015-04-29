@@ -21,7 +21,7 @@ public class scratchnote implements EntryPoint {
 
             @Override
             public void onClick(ClickEvent event) {
-                StickyNote newNote = new StickyNote();
+                StickyNote newNote = new StickyNote(true);
 
                 RootPanel.get("notes").add(newNote);
                 newNote.setFocus(true);
@@ -53,6 +53,7 @@ public class scratchnote implements EntryPoint {
 //        RootPanel.get("slot2").add(label);
     }
 
+    // TODO: callbacks + watcher
     private static class MyAsyncCallback implements AsyncCallback<String> {
 
         private Label label;
