@@ -5,6 +5,19 @@ h1 {
     text-align: center;
 }
 
+.title {
+    text-align: center;
+    font-size: 16pt;
+}
+
+.title span.sub-title {
+    display: block;
+    margin-top: 5px;
+    color: gray;
+    font-family: 'Gloria Hallelujah', cursive;
+    font-size: 12pt;
+}
+
 body, td, a, div, .p {
     font-family: arial, sans-serif
 }

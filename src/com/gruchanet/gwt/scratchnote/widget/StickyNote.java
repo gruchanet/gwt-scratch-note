@@ -1,37 +1,128 @@
 package com.gruchanet.gwt.scratchnote.widget;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.TextArea;
+import com.gruchanet.gwt.scratchnote.client.scratchnoteService;
 import com.gruchanet.gwt.scratchnote.domain.Note;
 
 public class StickyNote extends Composite {
 
+    private int id = -1;
     private Note bean;
 
     private NoteTextArea noteTextArea = new NoteTextArea();
-    private ControlButton closeBtn = new ControlButton(ControlButton.Type.REMOVE);
-    private ControlButton saveBtn = new ControlButton(ControlButton.Type.SAVE);
-    private ControlButton editBtn = new ControlButton(ControlButton.Type.EDIT);
+    private ControlButton removeBtn = new ControlButton(ControlButton.Type.REMOVE, new ClickHandler() {
+        @Override
+        public void onClick(ClickEvent event) {
+            /* REMOVE */
+            scratchnoteService.App.getInstance().removeNote(id, new AsyncCallback<Void>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                    // TODO: error handling
+                }
 
+                @Override
+                public void onSuccess(Void result) {
+                    remove();
+                }
+            });
+        }
+    });
+    private ControlButton saveBtn = new ControlButton(ControlButton.Type.SAVE, new ClickHandler() {
+        @Override
+        public void onClick(ClickEvent event) {
+            updateBean();
+
+            if (!isInitialized()) {
+                /* ADD */
+                scratchnoteService.App.getInstance().addNote(bean, new AsyncCallback<Integer>() {
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        // TODO: error handling
+                    }
+
+                    @Override
+                    public void onSuccess(Integer id) {
+                        setID(id);
+                        setEditMode(false);
+                    }
+                });
+            } else {
+                /* UPDATE */
+                scratchnoteService.App.getInstance().updateNote(id, bean, new AsyncCallback<Void>() {
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        // TODO: error handling
+                    }
+
+                    @Override
+                    public void onSuccess(Void result) {
+                        setEditMode(false);
+                    }
+                });
+            }
+        }
+    });
+    private ControlButton editBtn = new ControlButton(ControlButton.Type.EDIT, new ClickHandler() {
+        @Override
+        public void onClick(ClickEvent event) {
+            setEditMode(true);
+            setFocus(true);
+        }
+    });
+
+    /**
+     * Add new note.
+     * @param editMode
+     */
     public StickyNote(boolean editMode) {
         super();
 
-        initBean();
+        setBean(new Note());
+        setText("Note something here...");
         initWidget(editMode);
     }
 
-    private void initBean() {
-        bean = new Note();
-        setText("Note something here...");
+    /**
+     * Add existing note.
+     * @param id
+     * @param note
+     */
+    public StickyNote(int id, Note note) {
+        super();
+
+        initData(id, note);
+        updateNoteText();
+        initWidget(false);
+    }
+
+    private void setID(int id) {
+        this.id = id;
+    }
+
+    public Note getBean() {
+        return bean;
+    }
+
+    private void setBean(Note bean) {
+        this.bean = bean;
+    }
+
+    private void initData(int id, Note bean) {
+        setID(id);
+        setBean(bean);
     }
 
     private void initWidget(boolean editMode) {
         FlowPanel panel = new FlowPanel();
         panel.setStyleName("note-wrapper");
         panel.add(noteTextArea);
-        panel.add(closeBtn);
+        panel.add(removeBtn);
         panel.add(saveBtn);
         panel.add(editBtn);
         setEditMode(editMode);
@@ -39,8 +130,12 @@ public class StickyNote extends Composite {
         initWidget(panel);
     }
 
-    public Note getBean() {
-        return bean;
+    private boolean isInitialized() {
+        return id != -1;
+    }
+
+    public void remove() {
+        removeFromParent();
     }
 
     public void setEditMode(boolean editMode) {
@@ -61,11 +156,15 @@ public class StickyNote extends Composite {
 
     public void setText(String text) {
         bean.setText(text);
-        refreshNoteText();
+        updateNoteText();
     }
 
-    public void refreshNoteText() {
+    private void updateNoteText() {
         noteTextArea.setText(bean.getText());
+    }
+
+    private void updateBean() {
+        bean.setText(noteTextArea.getText());
     }
 
     private static class NoteTextArea extends TextArea {
@@ -110,12 +209,11 @@ public class StickyNote extends Composite {
             }
         }
 
-        public ControlButton(Type type) {
-            super();
+        public ControlButton(Type type, ClickHandler clickHandler) {
+            super(type.getHTML(), clickHandler);
 
             setStyleName("note-control");
             addStyleName(type.getName());
-            setHTML(type.getHTML());
         }
     }
 }

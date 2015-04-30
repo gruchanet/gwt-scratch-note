@@ -9,26 +9,29 @@ import java.util.*;
 public class scratchnoteServiceImpl extends RemoteServiceServlet implements scratchnoteService {
 
     private int nextID = 1;
-    private Map<Integer, Note> notes = new HashMap<Integer, Note>(); // in memory OR local-storage
+    private Map<Integer, Note> notes = new HashMap<Integer, Note>(); // TODO: in-memory OR local-storage
 
-    public Collection<Note> getNotes() {
-        return notes.values();
+    public Map<Integer, Note> getNotes() {
+        return notes;
     }
 
-    public Note getNote(int seqID) {
-        return notes.get(seqID);
+    public Note getNote(int id) {
+        return notes.get(id);
     }
 
-    public void addNote(Note note) {
-        notes.put(nextID++, note);
+    public int addNote(Note note) {
+        int id = nextID++;
+        notes.put(id, note);
+
+        return id;
     }
 
-    public void removeNote(int seqID) {
-        notes.remove(seqID);
+    public void updateNote(int id, Note note) {
+        notes.remove(id);
+        notes.put(id, note);
     }
 
-    public void updateNote(int seqID, Note note) {
-        notes.remove(seqID);
-        notes.put(seqID, note);
+    public void removeNote(int id) {
+        notes.remove(id);
     }
 }

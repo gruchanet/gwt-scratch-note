@@ -5,11 +5,15 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import com.gruchanet.gwt.scratchnote.domain.Note;
 
+import java.util.Map;
+
 @RemoteServiceRelativePath("scratchnoteService")
 public interface scratchnoteService extends RemoteService {
-    void addNote(Note note);
-    void removeNote(int seqID);
-    void updateNote(int seqID, Note note);
+    Map<Integer, Note> getNotes();
+    Note getNote(int id);
+    int addNote(Note note);
+    void updateNote(int id, Note note);
+    void removeNote(int id);
 
     /**
      * Utility/Convenience class.
